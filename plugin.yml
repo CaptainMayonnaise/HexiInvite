@@ -1,0 +1,22 @@
+name: HexiInvite
+main: com.hexicraft.invite.Main
+version: 1.0
+description: Rewards players for inviting others to the server.
+softdepend: [Vault, Essentials]
+commands:
+  invite:
+    description: Displays help for the HexiInvite plugin.
+    usage: /invite
+    permission: hexiinvite.user
+    permission-message: You don't have permission to do this.
+    aliases: [invite]
+  code:
+    description: Display your unique invite code.
+    usage: /code
+    permission: hexiinvite.user
+    permission-message: You don't have permission to do this.
+  redeem:
+    description: Redeem an invite code to receive a reward.
+    usage: /redeem <code>
+    permission: hexiinvite.user
+    permission-message: You don't have permission to do this.
