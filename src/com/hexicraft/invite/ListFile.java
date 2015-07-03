@@ -15,27 +15,23 @@ import java.util.ArrayList;
 public class ListFile extends ArrayList<String> {
 
     private JavaPlugin plugin;
-    private Path path;
+    private File dataFolder;
+    private File file;
 
-    ListFile(JavaPlugin plugin, Path path) {
+    ListFile(JavaPlugin plugin, File dataFolder, String filename) {
         this.plugin = plugin;
-        this.path = path;
+        this.dataFolder = dataFolder;
+        this.file = new File(dataFolder, filename);
     }
 
     public boolean loadFile() {
         try {
-            File file = new File(path.toString());
             if (file.exists()) {
-                addAll(Files.readAllLines(path, Charset.defaultCharset()));
-            } else {
-                if (!file.createNewFile()) {
-                    throw new IOException("Failed to create file");
-                }
+                addAll(Files.readAllLines(file.toPath(), Charset.defaultCharset()));
             }
             return true;
         } catch (IOException e) {
-            plugin.getLogger().severe("An I/O error has occurred while enabling HexiInvite:");
-            e.printStackTrace();
+            plugin.getLogger().severe("Failed to load file: " + e.getMessage());
             return false;
         }
     }
@@ -48,11 +44,14 @@ public class ListFile extends ArrayList<String> {
     }
 
     private void saveFile(String line) {
-        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))) {
+        if (!dataFolder.exists() && !dataFolder.mkdirs()) {
+            System.err.println("Failed to create directory.");
+        }
+
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)))) {
             out.println(line);
         }catch (IOException e) {
-            plugin.getLogger().severe("An I/O error has occurred while saving a HexiInvite file:");
-            e.printStackTrace();
+            plugin.getLogger().severe("Failed to save file: " + e.getMessage());
         }
     }
 }

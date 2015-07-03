@@ -1,5 +1,6 @@
 package com.hexicraft.invite;
 
+import com.hexicraft.invite.logger.HexiLogger;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -32,6 +33,7 @@ public class Main extends JavaPlugin {
     private boolean enabled;
     private Random random = new Random();
     private Economy econ = null;
+    private HexiLogger logger = new HexiLogger(getDataFolder());
 
     private int inviteeMoney;
     private int inviterMoney;
@@ -105,7 +107,7 @@ public class Main extends JavaPlugin {
     }
 
     private boolean setupRedeemed() {
-        redeemed = new ListFile(this, Paths.get(getDataFolder() + File.separator + "redeemed.txt"));
+        redeemed = new ListFile(this, getDataFolder(), "redeemed.txt");
         return redeemed.loadFile();
     }
 
@@ -167,10 +169,11 @@ public class Main extends JavaPlugin {
                     " - Display your unique invite code");
             player.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GOLD + "/redeem <code>" + ChatColor.WHITE +
                     " - Redeem an invite code to receive a reward");
+            player.sendMessage(ChatColor.DARK_GRAY + "- ");
             player.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GOLD + "You will receive " +
-                    ChatColor.WHITE + inviterMoney + ChatColor.GOLD + "for inviting a player.");
+                    ChatColor.WHITE + inviterMoney + ChatColor.GOLD + " for inviting a player.");
             player.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GOLD + "They will receive " +
-                    ChatColor.WHITE + inviteeMoney);
+                    ChatColor.WHITE + inviteeMoney + ChatColor.GOLD + " for being invited.");
             return ReturnCode.SUCCESS;
         }
     }
@@ -258,6 +261,7 @@ public class Main extends JavaPlugin {
                 inviter.sendMessage(ChatColor.WHITE + econ.format(inviterMoney) +
                         ChatColor.GOLD + " has been added to your account.");
             }
+            logger.log("\"" + inviterUuid + "\" invited \"" + player.getUniqueId() + "\"");
             return ReturnCode.SUCCESS;
         }
     }
